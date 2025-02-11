@@ -1,6 +1,6 @@
 {
   "name": "cy2pwconvert",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI tool to convert Cypress tests to Playwright",
   "bin": {
     "cy2pwconvert": "main.js"
@@ -56,10 +56,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arunchaitanyajami/cy2pwcli.git"
+    "url": "git+https://github.com/arunchaitanyajami/cy2pwconvert.git"
   },
   "bugs": {
-    "url": "https://github.com/arunchaitanyajami/cy2pwcli/issues"
+    "url": "https://github.com/arunchaitanyajami/cy2pwconvert/issues"
   },
-  "homepage": "https://github.com/arunchaitanyajami/cy2pwcli#readme"
+  "homepage": "https://github.com/arunchaitanyajami/cy2pwconvert#readme"
 }
