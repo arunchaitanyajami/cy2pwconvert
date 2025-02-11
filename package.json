@@ -1,0 +1,51 @@
+{
+  "name": "cy2pw",
+  "version": "1.0.0",
+  "description": "",
+  "bin": {
+    "cy2pwcli": "./main.js"
+  },
+  "scripts": {
+    "lint": "eslint --cache --ext ts src",
+    "main": "node main",
+    "translate": "npm run main data golden",
+    "test": "npm run translate && npx playwright test",
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "author": {
+    "name": "Microsoft Corporation"
+  },
+  "license": "Apache-2.0",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
+  "keywords": [],
+  "dependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/generator": "^7.23.0",
+    "@babel/helper-plugin-utils": "^7.22.5",
+    "@babel/parser": "^7.23.0",
+    "@babel/standalone": "^7.23.0",
+    "@babel/traverse": "^7.23.0",
+    "@babel/types": "^7.23.0",
+    "commander": "^11.0.0",
+    "prettier": "^3.0.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.38.0",
+    "@types/babel__core": "^7.20.0",
+    "@types/babel__helper-plugin-utils": "^7.10.1",
+    "@types/babel__traverse": "^7.20.2",
+    "@types/node": "^20.7.2",
+    "@typescript-eslint/eslint-plugin": "^6.6.0",
+    "@typescript-eslint/parser": "^6.6.0",
+    "eslint": "^8.37.0",
+    "eslint-plugin-notice": "^0.9.10",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "typescript": "^5.2.2"
+  }
+}
