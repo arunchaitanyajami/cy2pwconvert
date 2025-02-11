@@ -25,7 +25,7 @@ export const createUtils = (api: BabelAPI) => {
   class Utils {
     constructor() {}
 
-    makeSyncCall(expression: t.Expression, method: string, args: Arg[] = []) {
+    makeSyncCall(expression: t.Expression, method: string, args: any) {
       const result = t.callExpression(t.memberExpression(expression, t.identifier(method)), args);
       (result as any).__processed = true;
       return result;
