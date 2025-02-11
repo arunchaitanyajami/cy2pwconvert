@@ -1,9 +1,9 @@
 {
-  "name": "cy2pw",
+  "name": "cy2pwconvert",
   "version": "1.0.0",
-  "description": "",
+  "description": "CLI tool to convert Cypress tests to Playwright",
   "bin": {
-    "cy2pwcli": "./main.js"
+    "cy2pwconvert": "main.js"
   },
   "scripts": {
     "lint": "eslint --cache --ext ts src",
@@ -13,17 +13,20 @@
     "build": "tsc",
     "watch": "tsc -w"
   },
-  "author": {
-    "name": "Microsoft Corporation"
-  },
-  "license": "Apache-2.0",
+  "author": "arunchaitanyajami",
+  "license": "MIT",
   "exports": {
     ".": {
       "types": "./index.d.ts",
       "default": "./index.js"
     }
   },
-  "keywords": [],
+  "keywords": [
+    "cypress",
+    "playwright",
+    "migration",
+    "testing"
+  ],
   "dependencies": {
     "@babel/core": "^7.23.0",
     "@babel/generator": "^7.23.0",
@@ -47,5 +50,16 @@
     "eslint-plugin-notice": "^0.9.10",
     "eslint-plugin-react-hooks": "^4.3.0",
     "typescript": "^5.2.2"
-  }
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arunchaitanyajami/cy2pwcli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arunchaitanyajami/cy2pwcli/issues"
+  },
+  "homepage": "https://github.com/arunchaitanyajami/cy2pwcli#readme"
 }

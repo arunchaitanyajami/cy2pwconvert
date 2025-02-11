@@ -71,7 +71,7 @@ const program = new Command();
 
 program
     .version('Version ' + packageJSON.version)
-    .name('npx cy2pw')
+    .name('npx cy2pwconvert')
     .usage('.cypress/ tests/')
     .argument('<src>', 'Source file or folder')
     .argument('<dst>', 'Target file or folder')
