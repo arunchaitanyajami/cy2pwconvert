@@ -20,20 +20,25 @@ const mapCucumber = (content: string): string => {
   let importStatementBefore = '';
   if (content.match(regx)) {
     importStatementBefore += `import { Given, When, Then, Before, After, setDefaultTimeout } from "@cucumber/cucumber";\n\n`;
-    importStatementBefore += `import { chromium, Browser, Page, BrowserContext, defineConfig} from "@playwright/test";\n\n`;
+    importStatementBefore += `import { chromium, Browser, Page, BrowserContext, defineConfig, expect} from "@playwright/test";\n\n`;
     importStatementBefore += `let page,browser,context;\n\n`;
-    importStatementBefore += `Before(async function () {
+
+    if (!content.match(/^\s*(Before)\b/gm)) {
+      importStatementBefore += `Before(async function () {
     browser = await chromium.launch({ headless: false });
   context = await browser.newContext();
   page = await context.newPage();
 });\n\n`;
+    }
   }
 
   let importStatementAfter = '';
-  if (content.match(regx)){
-    importStatementAfter += `After(async () => {
+  if (content.match(regx)) {
+    if (!content.match(/^\s*(After)\b/gm)) {
+      importStatementAfter += `After(async () => {
   await browser.close();
 });\n\n`;
+    }
   }
 
   return importStatementBefore + `${content}\n\n` + importStatementAfter;
