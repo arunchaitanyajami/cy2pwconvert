@@ -20,7 +20,7 @@ const mapCucumber = (content: string): string => {
   const regx = /^\s*(Then|When|Given|And)\b/gm;
   let importStatementBefore = '';
   if (content.match(regx)) {
-    if (packageJSON.type && packageJSON.type === 'module') {
+    if (packageJSON?.type && packageJSON?.type === 'module') {
       importStatementBefore += `import { Given, When, Then, Before, After, setDefaultTimeout } from "@cucumber/cucumber";\n\n`;
       importStatementBefore += `import { chromium, Browser, Page, BrowserContext, defineConfig, expect} from "@playwright/test";\n\n`;
     } else {
@@ -32,7 +32,8 @@ const mapCucumber = (content: string): string => {
 
     if (!content.match(/^\s*(Before)\b/gm)) {
       importStatementBefore += `Before(async function () {
-    browser = await chromium.launch({ headless: false });
+      const isHeadless = process.env.HEADLESS !== "false"; 
+    browser = await chromium.launch({ headless: isHeadless });
   context = await browser.newContext();
   page = await context.newPage();
 });\n\n`;
