@@ -5,3 +5,5 @@ lib/
 .eslintcache
 .idea
 playwright/
+cucumber-report.html
+cucumber-report.json
