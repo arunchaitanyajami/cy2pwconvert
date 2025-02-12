@@ -4,3 +4,4 @@ playwright-report/
 lib/
 .eslintcache
 .idea
+playwright/

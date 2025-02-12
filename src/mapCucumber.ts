@@ -16,10 +16,11 @@
 
 const mapCucumber = (content: string): string => {
 
+  const regx = /^\s*(Then|When|Given|And)\b/gm;
   let importStatementBefore = '';
-  if (content.match(/(Then|When|Given|And)/g)) {
+  if (content.match(regx)) {
     importStatementBefore += `import { Given, When, Then, Before, After, setDefaultTimeout } from "@cucumber/cucumber";\n\n`;
-    importStatementBefore += `import { chromium, Browser, Page, BrowserContext, defineConfig, test, expect } from "@playwright/test";\n\n`;
+    importStatementBefore += `import { chromium, Browser, Page, BrowserContext, defineConfig} from "@playwright/test";\n\n`;
     importStatementBefore += `let page,browser,context;\n\n`;
     importStatementBefore += `Before(async function () {
     browser = await chromium.launch({ headless: false });
@@ -29,7 +30,7 @@ const mapCucumber = (content: string): string => {
   }
 
   let importStatementAfter = '';
-  if (content.match(/(Then|When|Given|And)/g)){
+  if (content.match(regx)){
     importStatementAfter += `After(async () => {
   await browser.close();
 });\n\n`;

@@ -1,6 +1,6 @@
 {
   "name": "cy2pwconvert",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "CLI tool to convert Cypress tests to Playwright",
   "bin": {
     "cy2pwconvert": "main.js"
@@ -8,7 +8,7 @@
   "scripts": {
     "lint": "eslint --cache --ext ts src",
     "main": "node main",
-    "translate": "npm run main data golden",
+    "translate": "npm run main data playwright",
     "test": "npm run translate && npx playwright test",
     "build": "tsc",
     "watch": "tsc -w"
@@ -35,6 +35,7 @@
     "@babel/standalone": "^7.23.0",
     "@babel/traverse": "^7.23.0",
     "@babel/types": "^7.23.0",
+    "@cucumber/cucumber": "^11.2.0",
     "commander": "^11.0.0",
     "prettier": "^3.0.3"
   },
