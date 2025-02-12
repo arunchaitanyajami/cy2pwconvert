@@ -26,8 +26,6 @@ type Result = {
 };
 
 export default async function(api: BabelAPI, prettier: typeof import('prettier'), filePath: string, text: string, plugins?: any): Promise<Result> {
-  console.log('text', text);
-
   try {
     text = api.transform(text, {
       filename: filePath,
