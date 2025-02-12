@@ -100,9 +100,10 @@ cy2pwconvert ./cypress/integration ./playwright/tests
 
 ---
 
-## Inspiration
+## Foundation
 
-I took the inspiration from ``cy2pw`` package
+I took the inspiration from ``cy2pw`` package.
+Copied the code and added additional features on top of this code.
 
 Open Source Packages : https://www.npmjs.com/package/cy2pw
 

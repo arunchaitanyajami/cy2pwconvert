@@ -51,8 +51,10 @@ const processDirectory = (sourceDir: string, targetDir: string, options: any) =>
 };
 
 const processFile = async (file: any, sourcePath: string, targetPath: any) => {
+  console.log(`✅ Started : ${sourcePath} -> ${targetPath}`);
+
   let content = fs.readFileSync(sourcePath, 'utf8');
-  const result = await cy2pw(babel as BabelAPI, prettier, content);
+  const result = await cy2pw(babel as BabelAPI, prettier, sourcePath, content);
   let isError = false;
   if (!result.text && result.error) {
     console.log(`❌ Conversion Failed: ${sourcePath} -> ${targetPath}`);

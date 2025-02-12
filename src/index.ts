@@ -25,9 +25,12 @@ type Result = {
   error?: { message: string, line: number, column: number };
 };
 
-export default async function(api: BabelAPI, prettier: typeof import('prettier'), text: string, plugins?: any): Promise<Result> {
+export default async function(api: BabelAPI, prettier: typeof import('prettier'), filePath: string, text: string, plugins?: any): Promise<Result> {
+  console.log('text', text);
+
   try {
     text = api.transform(text, {
+      filename: filePath,
       plugins: [transform],
       retainLines: true,
     })!.code!;
