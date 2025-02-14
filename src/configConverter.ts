@@ -157,15 +157,16 @@ export const convertConfigFiles = async (parsedVar: Record<string, any>): Promis
   let playwrightConfigContent = '';
 
   if (existingPlaywrightConfigPath) {
+    console.log(`✅ Reading existing config data: ${existingPlaywrightConfigPath}`);
     playwrightConfigContent = fs.readFileSync(existingPlaywrightConfigPath, 'utf-8');
 
     const existingConfig = extractPlaywrightConfig(playwrightConfigContent, existingPlaywrightConfigPath);
 
     // Merge Cypress settings with existing Playwright config
     const mergedConfig = {
-      ...parsedVar,
       ...existingConfig,
       ...cypressToPlaywright, // Merge new settings
+      ...parsedVar,
       use: {
         ...existingConfig.use,
         ...cypressToPlaywright.use, // Merge `use` settings separately

@@ -104,8 +104,7 @@ program
         console.log('🚀 Installing Playwright...');
 
         // Run Playwright init with predefined JavaScript options
-        execSync(`npm install playwright@latest --save-dev`, { stdio: 'inherit' });
-        execSync(`npm install @playwright/test --save-dev`, { stdio: 'inherit' });
+        execSync(`npm install playwright@latest @playwright/test --save-dev`, { stdio: 'inherit' });
 
         // Ensure JavaScript setup
         console.log('🔧 Configuring Playwright with JavaScript...');
