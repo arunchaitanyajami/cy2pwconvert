@@ -25,6 +25,7 @@ import { Command } from 'commander';
 import { execSync } from 'child_process';
 
 const packageJSON = require('../package.json'); // @ts-ignore
+import { convertConfigFiles } from './configConverter';
 
 const isPlaywrightInstalled = () => {
   const packageJsonPath = path.join(process.cwd(), 'playwright.config.js');
@@ -107,6 +108,10 @@ program
 
         console.log('✅ Playwright setup complete.');
       }
+
+      await convertConfigFiles({
+        'testDir': `./${TARGET_DIR}`
+      });
 
       console.log(`🚀 Migrating Cypress tests from "${SOURCE_DIR}" to "${TARGET_DIR}"...`);
       processDirectory(SOURCE_DIR, TARGET_DIR, options);

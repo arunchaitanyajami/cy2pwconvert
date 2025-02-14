@@ -1,6 +1,6 @@
 {
   "name": "cy2pwconvert",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "CLI tool to convert Cypress tests to Playwright",
   "bin": {
     "cy2pwconvert": "main.js"
@@ -38,7 +38,8 @@
     "@babel/types": "^7.23.0",
     "@cucumber/cucumber": "^11.2.0",
     "commander": "^11.0.0",
-    "prettier": "^3.0.3"
+    "prettier": "^3.0.3",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@playwright/test": "1.38.0",
