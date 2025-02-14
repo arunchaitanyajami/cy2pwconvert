@@ -31,6 +31,7 @@ export default async function(api: BabelAPI, prettier: typeof import('prettier')
       filename: filePath,
       plugins: [transform],
       retainLines: true,
+      presets: ['@babel/preset-typescript'],
     })!.code!;
   } catch (e: any) {
     if (!e.loc)
@@ -46,11 +47,11 @@ export default async function(api: BabelAPI, prettier: typeof import('prettier')
 
   text = mapCommand(text);
   text = mapImports(text);
-  text = mapCucumber(text);
+  text = mapCucumber(text, filePath);
 
   try {
     text = await prettier.format(text, {
-      parser: 'babel',
+      parser: 'typescript',
       semi: true,
       trailingComma: 'es5',
       singleQuote: true,

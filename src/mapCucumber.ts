@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const packageJSON = require('../package.json');
+import { getImportType } from './functions';
 
-const mapCucumber = (content: string): string => {
+const mapCucumber = (content: string, filePath: string): string => {
 
   const regx = /^\s*(Then|When|Given|And)\b/gm;
   let importStatementBefore = '';
   if (content.match(regx)) {
-    if (packageJSON?.type && packageJSON?.type === 'module') {
+    if ('import' === getImportType(filePath)) {
       importStatementBefore += `import { Given, When, Then, Before, After, setDefaultTimeout } from "@cucumber/cucumber";\n\n`;
       importStatementBefore += `import { chromium, Browser, Page, BrowserContext, defineConfig, expect} from "@playwright/test";\n\n`;
+      importStatementBefore += `let page: Page, browser: Browser, context;\n\n`;
     } else {
       importStatementBefore += `const { Given, When, Then, Before, After, setDefaultTimeout } = require("@cucumber/cucumber");\n\n`;
       importStatementBefore += `const { chromium, Browser, Page, BrowserContext, defineConfig, expect} = require("@playwright/test");\n\n`;
+      importStatementBefore += `let page,browser,context;\n\n`;
     }
-
-    importStatementBefore += `let page,browser,context;\n\n`;
 
     if (!content.match(/^\s*(Before)\b/gm)) {
       importStatementBefore += `Before(async function () {
