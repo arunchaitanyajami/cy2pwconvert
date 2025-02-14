@@ -51,6 +51,7 @@ cy2pwconvert --help
 - Replaces Cypress commands (`cy.visit()`, `cy.get()`, etc.) with Playwright equivalents.
 - Ensures `async/await` syntax for Playwright compatibility.
 - Converts all `.js` and `.ts` test files while maintaining directory structure.
+- Converts you Cypress config to Playwright config
 
 ---
 
@@ -80,6 +81,29 @@ test.describe('Login', async ({ page }) => {
   });
 });
 ```
+
+🛠 Supported Cypress → Playwright Config Mappings
+
+✅ Supports all Cypress config formats:
+* cypress.config.js
+* cypress.config.json
+* cypress.config.ts (via ts-node)
+
+✅ Merges into existing playwright.config.ts
+* If the Playwright config already has settings, it preserves them while adding the new ones.
+
+✅ Creates a new Playwright config if missing
+
+✅ Supports both Playwright JS & TS configs:
+* Detects if playwright.config.ts or playwright.config.js exists.
+* Merges Cypress settings into the correct file.
+
+✅ Handles missing Playwright config:
+
+* If no playwright.config.ts/js exists, it creates a new one based on the detected Cypress format.
+* 
+✅ Automatically formats with Prettier
+
 
 ---
 
