@@ -88,6 +88,11 @@ program
         'Installs Dependency after project clone',
         false
     )
+    .option(
+        '-sC, --skipConfig <skipConfig>',
+        'Skips the config conversion from cypress to playwright',
+        true
+    )
     .showHelpAfterError()
     .action(async (src: string, dst: string, options) => {
       const SOURCE_DIR = src || './cypress/integration';
@@ -109,9 +114,12 @@ program
         console.log('✅ Playwright setup complete.');
       }
 
-      await convertConfigFiles({
-        'testDir': `./${TARGET_DIR}`
-      });
+      const skipConfig: boolean = options?.skipConfig === '1' || options?.skipConfig === 'true' || options?.skipConfig === true;
+      if (!skipConfig) {
+        await convertConfigFiles({
+          'testDir': `./${TARGET_DIR}`
+        });
+      }
 
       console.log(`🚀 Migrating Cypress tests from "${SOURCE_DIR}" to "${TARGET_DIR}"...`);
       processDirectory(SOURCE_DIR, TARGET_DIR, options);

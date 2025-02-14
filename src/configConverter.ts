@@ -81,24 +81,55 @@ const formatWithPrettier = async (text: string, isTs: boolean): Promise<string> 
   }
 };
 
-// Function to safely extract the Playwright config object
-// Function to safely extract the Playwright config object
+// Define the sanitize function to remove comments and handle dynamic expressions
+const sanitizePlaywrightConfig = (config: string): string => {
+  // Remove single-line comments (starting with //)
+  config = config.replace(/\/\/.*$/gm, '');
+
+  // Remove block comments (starting with /* and ending with */)
+  config = config.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  // Replace dynamic expressions like `process.env` with default values
+  config = config.replace(/process\.env\.(\w+)/g, (match, envVar) => {
+    // Handle common environment variables here (extend as needed)
+    if (envVar === 'CI')
+      return "'CI'"; // Replace with string for environment variables
+
+    return 'undefined'; // Replace other `process.env` values with undefined
+  });
+
+  // Optionally remove any references to `devices` if they exist in the config
+  config = config.replace(/devices\[[^\]]*]/g, '{}');  // Remove any usage of `devices`
+
+  return config.replace(/[\r\n]+/g, '');
+};
+
+// Function to extract Playwright config from a file
 const extractPlaywrightConfig = (config: string, filePath: string): Record<string, any> => {
   try {
+    // First check for `defineConfig` style (Playwright 2.x style)
     let match = config.match(/export default defineConfig\(([\s\S]*?)\);/m);
-    if (match)
-      return eval(`(${match[1]})`) as Record<string, any>;
+    if (match) {
+      // Sanitize and clean the config string.
+      const sanitizedConfig = sanitizePlaywrightConfig(match[1]);
+      return eval(`(${sanitizedConfig})`) as Record<string, any>;
+    }
 
+    // Check for regular `export default {}` style
     match = config.match(/export default (.*);/m);
-    if (match)
-      match = require(filePath);
-    // @ts-ignore
-    return match && match['default'] ? match['default'] : {};
+    if (match) {
+      const configFile = require(filePath);
+      // Return the default export if it exists
+      return configFile?.default || {};
+    }
+
+    return {}; // If no match, return empty object
   } catch (error) {
-    console.warn('⚠️ Failed to parse existing Playwright config. Using empty object.');
+    console.warn('⚠️ Failed to parse existing Playwright config: Using empty object');
     return {};
   }
 };
+
 
 // **Function to convert Cypress config to Playwright with dynamic variables**
 export const convertConfigFiles = async (parsedVar: Record<string, any>): Promise<void> => {
@@ -140,8 +171,6 @@ export const convertConfigFiles = async (parsedVar: Record<string, any>): Promis
         ...cypressToPlaywright.use, // Merge `use` settings separately
       },
     };
-
-    console.log(mergedConfig);
 
     // Generate new config string
     const updatedConfig = `

@@ -44,6 +44,23 @@ cy2pwconvert ./my-cypress-tests ./my-playwright-tests
 cy2pwconvert --help
 ```
 
+### **Options**
+```shell
+Usage: npx cy2pwconvert .cypress/ tests/
+
+Arguments:
+  src                                            Source file or folder
+  dst                                            Target file or folder
+
+Options:
+  -V, --version                                  output the version number
+  -ft, --filetype <filetype>                     File types to convert default: .js, example: .js,.ts, current support: .js,.ts,.jsx (default: ".js")
+  -idp, --installDependency <installDependency>  Installs Dependency after project clone (default: false)
+  -sC, --skipConfig <installDependency>          Skips the config conversion from cypress to playwright (default: true)
+  -h, --help                                     display help for command
+
+```
+
 ---
 
 ## 🔧 How It Works
