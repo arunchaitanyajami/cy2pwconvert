@@ -19,6 +19,7 @@ import type { BabelAPI } from '@babel/helper-plugin-utils';
 import mapCommand from './mapCommands';
 import mapImports from './mapImports';
 import mapCucumber from './mapCucumber';
+import cucumber from './cucumber';
 
 type Result = {
   text?: string;
@@ -29,7 +30,7 @@ export default async function(api: BabelAPI, prettier: typeof import('prettier')
   try {
     text = api.transform(text, {
       filename: filePath,
-      plugins: [transform],
+      plugins: [transform, cucumber],
       retainLines: true,
       presets: ['@babel/preset-typescript'],
     })!.code!;
