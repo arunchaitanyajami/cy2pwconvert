@@ -15,6 +15,7 @@
  */
 import fs from 'fs';
 import path from 'path';
+import { types as t } from '@babel/core';
 
 export function getImportType(filePath: string): 'import' | 'require' {
   const ext = path.extname(filePath);
@@ -36,4 +37,73 @@ export function getImportType(filePath: string): 'import' | 'require' {
     console.error(`Error reading file ${filePath}:`, error);
     return 'require'; // Safe fallback
   }
+}
+
+/**
+ * Create object patterns.
+ *
+ * @param params
+ * @param isObjectPattern
+ */
+export function createObjectPattern(params: string[], isObjectPattern: boolean = true) {
+  return t.objectPattern(params.map(param => {
+    return t.objectProperty(t.identifier(param === 'this' ? 'context' : param), t.identifier(param === 'this' ? 'context' : param), false, true);
+  }));
+}
+
+/**
+ * Recursively replaces any type references to `identifier` with `newName` inside type annotations.
+ */
+export function replaceThisInTypeAnnotation(node: any, identifier: string, newName: string): void {
+  if (!node) return;
+
+  // Handle TS style type references.
+  if (
+    typeof t.isTSTypeReference === 'function' &&
+      t.isTSTypeReference(node) &&
+      t.isIdentifier(node.typeName) &&
+      node.typeName.name === identifier
+  )
+    node.typeName.name = newName;
+
+
+  // Handle Flow style generic type annotations.
+  if (
+    typeof t.isGenericTypeAnnotation === 'function' &&
+      t.isGenericTypeAnnotation(node) &&
+      t.isIdentifier(node.id) &&
+      node.id.name === identifier
+  )
+    node.id.name = newName;
+
+
+  // Recursively process all properties of the node.
+  for (const key in node) {
+    if (Object.prototype.hasOwnProperty.call(node, key)) {
+      const child = node[key];
+      if (Array.isArray(child)) {
+        child.forEach(item => {
+          if (item && typeof item === 'object' && item.type)
+            replaceThisInTypeAnnotation(item, identifier, newName);
+
+        });
+      } else if (child && typeof child === 'object' && child.type) {
+        replaceThisInTypeAnnotation(child, identifier, newName);
+      }
+    }
+  }
+}
+
+/**
+ * Append Page playwright Object.
+ *
+ * @param funcPath
+ */
+export function appendPlayWrightObjectArgs(funcPath: any) {
+  const node = funcPath.node;
+  // Ensure page is added to parameters
+
+  const newParams = ['page', ...node.params.map((p: { name: any; }) => p.name)];
+
+  node.params = [createObjectPattern(newParams)];
 }

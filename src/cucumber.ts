@@ -31,6 +31,7 @@
 import type { BabelAPI } from '@babel/helper-plugin-utils';
 import { declare } from '@babel/helper-plugin-utils';
 import * as t from '@babel/types';
+import { replaceThisInTypeAnnotation, appendPlayWrightObjectArgs } from './functions';
 
 export default declare((api: BabelAPI) => {
   api.assertVersion(7);
@@ -51,14 +52,12 @@ export default declare((api: BabelAPI) => {
             const node = argPath.node;
             if (t.isFunctionExpression(node) || t.isArrowFunctionExpression(node)) {
               // Replace the "this" parameter (if present) with "context" while preserving its type.
-              const identifier: string = 'this';
+              appendPlayWrightObjectArgs(argPath);
               const replacer: string  = 'context';
-              renameThisParam(argPath, identifier, replacer);
 
               // Also update the function's return type annotation if it exists.
               if (node.returnType)
-                replaceThisInTypeAnnotation(node.returnType, identifier, replacer);
-
+                replaceThisInTypeAnnotation(node.returnType, 'this', replacer);
 
               // Make the function async.
               node.async = true;
@@ -77,70 +76,4 @@ export default declare((api: BabelAPI) => {
     },
   };
 });
-
-/**
- * Replaces the parameter named `identifier` (e.g. "this") with a new identifier (e.g. "context").
- * The new parameter will preserve the original type annotation.
- */
-function renameThisParam(funcPath: any, identifier: string, newName: string) {
-  const node = funcPath.node;
-  // Find a parameter whose name matches the identifier.
-  const index = node.params.findIndex(
-      (param: any) => t.isIdentifier(param) && param.name === identifier
-  );
-  if (index !== -1) {
-    const oldParam = node.params[index] as t.Identifier;
-    // Create a new identifier with the new name and preserve the type annotation.
-    const newParam = t.identifier(newName);
-    if (oldParam.typeAnnotation) {
-      // Replace any occurrence of the old identifier inside the type annotation.
-      newParam.typeAnnotation = t.cloneDeep(oldParam.typeAnnotation);
-      replaceThisInTypeAnnotation(newParam.typeAnnotation, identifier, newName);
-    }
-    node.params[index] = newParam;
-  }
-}
-
-/**
- * Recursively replaces any type references to `identifier` with `newName` inside type annotations.
- */
-function replaceThisInTypeAnnotation(node: any, identifier: string, newName: string): void {
-  if (!node) return;
-
-  // Handle TS style type references.
-  if (
-    typeof t.isTSTypeReference === 'function' &&
-      t.isTSTypeReference(node) &&
-      t.isIdentifier(node.typeName) &&
-      node.typeName.name === identifier
-  )
-    node.typeName.name = newName;
-
-
-  // Handle Flow style generic type annotations.
-  if (
-    typeof t.isGenericTypeAnnotation === 'function' &&
-      t.isGenericTypeAnnotation(node) &&
-      t.isIdentifier(node.id) &&
-      node.id.name === identifier
-  )
-    node.id.name = newName;
-
-
-  // Recursively process all properties of the node.
-  for (const key in node) {
-    if (Object.prototype.hasOwnProperty.call(node, key)) {
-      const child = node[key];
-      if (Array.isArray(child)) {
-        child.forEach(item => {
-          if (item && typeof item === 'object' && item.type)
-            replaceThisInTypeAnnotation(item, identifier, newName);
-
-        });
-      } else if (child && typeof child === 'object' && child.type) {
-        replaceThisInTypeAnnotation(child, identifier, newName);
-      }
-    }
-  }
-}
 
