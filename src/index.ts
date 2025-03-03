@@ -16,7 +16,6 @@
 
 import { transform } from './transform';
 import type { BabelAPI } from '@babel/helper-plugin-utils';
-import mapCommand from './mapCommands';
 import mapImports from './mapImports';
 import mapCucumber from './mapCucumber';
 import cucumber from './cucumber';
@@ -24,6 +23,7 @@ import path from 'path';
 import fs from 'fs';
 import transformBdd from './transformBdd';
 import ArrowFunctionExpression from './ArrowFunctionExpression';
+import transformCyCommands from './transformCyCommands';
 
 type Result = {
   text?: string;
@@ -63,7 +63,8 @@ export default async function(api: BabelAPI, prettier: typeof import('prettier')
   let pluginsList = [
     transform,
     cucumber,
-    ArrowFunctionExpression
+    ArrowFunctionExpression,
+    transformCyCommands,
   ];
 
   const preserveBDD: boolean = option?.preserveBDD === '1' || option?.preserveBDD === 'true';
@@ -98,7 +99,6 @@ export default async function(api: BabelAPI, prettier: typeof import('prettier')
     };
   }
 
-  text = mapCommand(text);
   text = mapImports(text);
   text = mapCucumber(text, filePath);
 

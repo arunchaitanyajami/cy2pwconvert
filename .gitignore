@@ -7,3 +7,8 @@ lib/
 playwright/
 cucumber-report.html
 cucumber-report.json
+
+# Playwright
+/playwright-report/
+/blob-report/
+/playwright/.cache/

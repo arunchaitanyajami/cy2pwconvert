@@ -1,12 +1,6 @@
-import {
-  visitAndApproveStorage
-} from '../../../support/ui-test-helper.js'
 
 // See https://github.com/SVG-Edit/svgedit/issues/359
 describe('Fix issue 359', function () {
-  beforeEach(() => {
-    visitAndApproveStorage()
-  })
 
   it('can undo without throwing', function () {
     cy.get('#tool_source').click({ force: true })
