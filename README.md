@@ -54,9 +54,12 @@ Arguments:
 
 Options:
   -V, --version                                  output the version number
-  -ft, --filetype <filetype>                     File types to convert default: .js, example: .js,.ts, current support: .js,.ts,.jsx (default: ".js")
+  -ft, --filetype <filetype>                     File types to convert default: .js, example: .js,.ts, current support: .js,.ts,.jsx (default: ".js,.ts")
   -idp, --installDependency <installDependency>  Installs Dependency after project clone (default: false)
-  -sC, --skipConfig <installDependency>          Skips the config conversion from cypress to playwright (default: true)
+  -sC, --skipConfig <skipConfig>                 Skips the config conversion from cypress to playwright (default: true)
+  -ep, --enablePlugins <enablePlugins>           If enabled, this packages takes plugins from babel config file or package file, which comes under plugins key. (default:
+                                                 false)
+  -ep, --preserveBDD <preserveBDD>               This option will help you to preserve bdd being converted to tdd (default: true)
   -h, --help                                     display help for command
 
 ```
@@ -151,4 +154,9 @@ Open Source Packages : https://www.npmjs.com/package/cy2pw
 
 ## 📝 License
 MIT License. Feel free to contribute! 🚀
+
+## Version Update
+### v1.0.13
+* Support Cypress custom commands.
+* Cucumber:  Move away from Regx to Babel plugin.
 

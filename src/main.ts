@@ -32,30 +32,56 @@ const isPlaywrightInstalled = () => {
   return fs.existsSync(packageJsonPath);
 };
 
-const processDirectory = (sourceDir: string, targetDir: string, options: any) => {
+const processDirectory = async (sourceDir: string, targetDir: string, options: any, priorityFolders: string[]) => {
   if (!fs.existsSync(targetDir))
     fs.mkdirSync(targetDir, { recursive: true });
+
 
   const allowedExtensions = options?.filetype.split(',');
   const checkExtension = (ext: string) => allowedExtensions.includes(ext);
 
+  // Read all files and directories
   const files = fs.readdirSync(sourceDir);
-  files.forEach(async (file: string) => {
-    const sourcePath = path.join(sourceDir, file);
-    const targetPath = path.join(targetDir, file);
 
-    if (fs.statSync(sourcePath).isDirectory())
-      processDirectory(sourcePath, targetPath, options);
-    else if (checkExtension(file.endsWith('.js') ? '.js' : '') || checkExtension(file.endsWith('.ts') ? '.ts' : '') || checkExtension('all'))
-      await processFile(file, sourcePath, targetPath);
-  });
+  // Split into priority folders and other folders
+  const directories = files.filter(file => fs.statSync(path.join(sourceDir, file)).isDirectory());
+  const priorityDirectories = directories.filter(dir => priorityFolders.includes(dir));  // Folders in priority list
+  const otherDirectories = directories.filter(dir => !priorityFolders.includes(dir));  // Other folders
+
+  // Process the priority folders first, in the given order
+  for (const dir of priorityDirectories) {
+    const sourcePath = path.join(sourceDir, dir);
+    const targetPath = path.join(targetDir, dir);
+    // Process the priority folder
+    await processDirectory(sourcePath, targetPath, options, priorityFolders);
+  }
+
+  // Then, process the other folders
+  for (const dir of otherDirectories) {
+    const sourcePath = path.join(sourceDir, dir);
+    const targetPath = path.join(targetDir, dir);
+    // Process the non-priority folder
+    await processDirectory(sourcePath, targetPath, options, priorityFolders);
+  }
+
+  // Process all files (after directories)
+  for (const file1 of files.filter(file => fs.statSync(path.join(sourceDir, file)).isFile())) {
+    const sourcePath = path.join(sourceDir, file1);
+    const targetPath = path.join(targetDir, file1);
+
+    // Process files based on extensions (js, ts, or 'all')
+    if (checkExtension(file1.endsWith('.js') ? '.js' : '') || checkExtension(file1.endsWith('.ts') ? '.ts' : '') || checkExtension('all'))
+      await processFile(file1, sourcePath, targetPath, options);
+
+  }
 };
 
-const processFile = async (file: any, sourcePath: string, targetPath: any) => {
+
+const processFile = async (file: any, sourcePath: string, targetPath: any, options: any) => {
   console.log(`✅ Started : ${sourcePath} -> ${targetPath}`);
 
   let content = fs.readFileSync(sourcePath, 'utf8');
-  const result = await cy2pw(babel as BabelAPI, prettier, sourcePath, content);
+  const result = await cy2pw(babel as BabelAPI, prettier, sourcePath, content, options);
   let isError = false;
   if (!result.text && result.error) {
     console.log(`❌ Conversion Failed: ${sourcePath} -> ${targetPath}`);
@@ -81,7 +107,7 @@ program
     .option(
         '-ft, --filetype <filetype>',
         'File types to convert default: .js, example: .js,.ts, current support: .js,.ts,.jsx',
-        '.js'
+        '.js,.ts'
     )
     .option(
         '-idp, --installDependency <installDependency>',
@@ -91,6 +117,16 @@ program
     .option(
         '-sC, --skipConfig <skipConfig>',
         'Skips the config conversion from cypress to playwright',
+        true
+    )
+    .option(
+        '-ep, --enablePlugins <enablePlugins>',
+        'If enabled, this packages takes plugins from babel config file or package file, which comes under plugins key.',
+        false
+    )
+    .option(
+        '-ep, --preserveBDD <preserveBDD>',
+        'This option will help you to preserve bdd being converted to tdd',
         true
     )
     .showHelpAfterError()
@@ -121,7 +157,7 @@ program
       }
 
       console.log(`🚀 Migrating Cypress tests from "${SOURCE_DIR}" to "${TARGET_DIR}"...`);
-      processDirectory(SOURCE_DIR, TARGET_DIR, options);
+      await processDirectory(SOURCE_DIR, TARGET_DIR, options, ['support']);
       console.log('🎉 Migration complete!');
     })
     .parse(process.argv);

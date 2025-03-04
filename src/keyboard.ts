@@ -44,6 +44,10 @@ export const createKeys = (api: BabelAPI) => {
         t.stringLiteral('Control+a')
     )],
     ['uparrow', 'ArrowUp'],
+    ['{backspace}', 'Backspace'],
+    ['{enter}', 'Enter'],
+    ['{esc}', 'Escape'],
+    ['{tab}', 'Tab'],
   ]);
 
   const modifierMap = new Map<string, string>([

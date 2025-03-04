@@ -855,7 +855,7 @@ export const createCyMapping = (api: BabelAPI) => {
           const value = keyMap.get(token.key.toLowerCase());
           if (!value)
             throw new Error('Unknown key: ' + token.key);
-          result.push(subject.callAsync('press', [typeof value === 'string' ? t.stringLiteral(value) : value, ...optionsWithoutDelay]));
+          result.push(pageKeyboard.callAsync('press', [typeof value === 'string' ? t.stringLiteral(value) : value, ...optionsWithoutDelay]));
           continue;
         }
         result.push(subject.callAsync(effectiveMethod, [t.stringLiteral(token.text!), ...options]));

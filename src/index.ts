@@ -16,20 +16,74 @@
 
 import { transform } from './transform';
 import type { BabelAPI } from '@babel/helper-plugin-utils';
-import mapCommand from './mapCommands';
 import mapImports from './mapImports';
 import mapCucumber from './mapCucumber';
+import cucumber from './cucumber';
+import path from 'path';
+import fs from 'fs';
+import transformBdd from './transformBdd';
+import ArrowFunctionExpression from './ArrowFunctionExpression';
+import transformCyCommands from './transformCyCommands';
 
 type Result = {
   text?: string;
   error?: { message: string, line: number, column: number };
 };
 
-export default async function(api: BabelAPI, prettier: typeof import('prettier'), filePath: string, text: string, plugins?: any): Promise<Result> {
+/**
+ * Get custom Babel plugins from package.json or babel.config.js
+ */
+function getCustomBabelPlugins(): any {
+  const packageJsonPath = path.resolve(process.cwd(), 'package.json');
+  const babelConfigPath = path.resolve(process.cwd(), 'babel.config.js');
+
+  try {
+    // Check for babel plugins in package.json
+    if (fs.existsSync(packageJsonPath)) {
+      const pkg = require(packageJsonPath);
+      if (pkg.babel && pkg.babel.plugins)
+        return pkg.babel.plugins;
+
+    }
+
+    // Check for babel.config.js
+    if (fs.existsSync(babelConfigPath)) {
+      const babelConfig = require(babelConfigPath);
+      if (babelConfig.plugins)
+        return babelConfig.plugins;
+
+    }
+  } catch (err) {
+    console.error('Error loading Babel configuration:', err);
+  }
+
+  return [];
+}
+export default async function(api: BabelAPI, prettier: typeof import('prettier'), filePath: string, text: string, option?: any): Promise<Result> {
+  let pluginsList = [
+    transform,
+    cucumber,
+    ArrowFunctionExpression,
+    transformCyCommands,
+  ];
+
+  const preserveBDD: boolean = option?.preserveBDD === '1' || option?.preserveBDD === 'true';
+  if (!preserveBDD){
+    // @ts-ignore
+    pluginsList.push(transformBdd);
+  }
+
+  const enablePlugins: boolean = option?.enablePlugins === '1' || option?.enablePlugins === 'true';
+  if (enablePlugins) {
+    const customPlugins = getCustomBabelPlugins();
+
+    pluginsList = [...pluginsList, ...customPlugins];
+  }
+
   try {
     text = api.transform(text, {
       filename: filePath,
-      plugins: [transform],
+      plugins: pluginsList,
       retainLines: true,
       presets: ['@babel/preset-typescript'],
     })!.code!;
@@ -45,7 +99,6 @@ export default async function(api: BabelAPI, prettier: typeof import('prettier')
     };
   }
 
-  text = mapCommand(text);
   text = mapImports(text);
   text = mapCucumber(text, filePath);
 
@@ -54,8 +107,7 @@ export default async function(api: BabelAPI, prettier: typeof import('prettier')
       parser: 'typescript',
       semi: true,
       trailingComma: 'es5',
-      singleQuote: true,
-      plugins
+      singleQuote: true
     });
   } catch (e) {
     console.log(e);

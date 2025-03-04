@@ -1,11 +1,5 @@
-import {
-  visitAndApproveStorage
-} from '../../support/ui-test-helper.js'
 
 describe('UI - Control Points', function () {
-  beforeEach(() => {
-    visitAndApproveStorage()
-  })
 
   it('Editor - No parameters: Drag control point of arc path', () => {
     const randomOffset = () => 2 + Math.round(10 + Math.random() * 40)

@@ -8,9 +8,7 @@ context('Cypress.Commands', () => {
   // https://on.cypress.io/custom-commands
 
   it('.add() - create a custom command', () => {
-    Cypress.Commands.add('console', {
-      prevSubject: true,
-    }, (subject, method) => {
+    Cypress.Commands.add('console', (subject, method) => {
       // the previous subject is automatically received
       // and the commands arguments are shifted
 

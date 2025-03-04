@@ -13,17 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { declare } from '@babel/helper-plugin-utils';
+import * as t from '@babel/types';
 
-/**
- * This command should run at the end of all file conversions , because it uses regular expressions.
- * @param content
- */
-const mapCommand = (content: string): string  => {
-  return content.replace(/Cypress\.Commands\.add\('([^']+)',\s*(?:async\s*)?\(([^)]*)?\)\s*=>\s*{([\s\S]+?)\n}\)/g, (match, functionName, params, body) => {
-    params = params ? params.trim() : ''; // Handle empty params
-    return `export async function ${functionName}(page${params ? `, ${params}` : ''}) {
-        ${body} 
-        }`;
-  });
-};
-export default mapCommand;
+export default declare(api => {
+  api.assertVersion(7);
+
+  return {
+    name: 'transform-bdd',
+    visitor: {
+      CallExpression(callPath) {
+        if (
+          t.isIdentifier(callPath.node.callee) &&
+            (callPath.node.callee.name === 'Given' ||
+                callPath.node.callee.name === 'When' ||
+                callPath.node.callee.name === 'Then')
+        )
+          callPath.node.callee.name = 'test';
+      }
+    },
+  };
+});

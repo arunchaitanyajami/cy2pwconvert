@@ -1,11 +1,5 @@
-import {
-  visitAndApproveStorage
-} from '../../support/ui-test-helper.js'
 
 describe('UI - Clipboard', function () {
-  beforeEach(() => {
-    visitAndApproveStorage()
-  })
 
   it('Editor - Copy and paste', () => {
     cy.get('#tool_source').click({ force: true })
