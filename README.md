@@ -155,3 +155,8 @@ Open Source Packages : https://www.npmjs.com/package/cy2pw
 ## 📝 License
 MIT License. Feel free to contribute! 🚀
 
+## Version Update
+### v1.0.13
+* Support Cypress custom commands.
+* Cucumber:  Move away from Regx to Babel plugin.
+
