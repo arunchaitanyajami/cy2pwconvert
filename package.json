@@ -1,6 +1,6 @@
 {
   "name": "cy2pwconvert",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "CLI tool to convert Cypress tests to Playwright",
   "bin": {
     "cy2pwconvert": "main.js"
